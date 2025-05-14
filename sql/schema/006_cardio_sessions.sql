@@ -9,5 +9,5 @@ CREATE TABLE cardio_sessions (
 );
 
 -- +goose Down
-DROP TABLE cardio_sessions
+DROP TABLE cardio_sessions;
 

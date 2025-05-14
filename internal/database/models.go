@@ -43,7 +43,7 @@ type StrengthTrainingSet struct {
 
 type User struct {
 	ID           uuid.UUID
-	Username     string
+	Email        string
 	PasswordHash string
 	CreatedAt    sql.NullTime
 	UpdatedAt    sql.NullTime
