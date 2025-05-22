@@ -10,30 +10,23 @@ import (
 )
 
 const createExercise = `-- name: CreateExercise :one
-INSERT INTO exercises (id, name, exercise_type, notes)
+INSERT INTO exercises (id, name, exercise_type)
 VALUES (
 	gen_random_uuid(),
 	$1,
-	$2,
-	$3
+	$2
 )
-RETURNING id, name, exercise_type, notes
+RETURNING id, name, exercise_type
 `
 
 type CreateExerciseParams struct {
 	Name         string
 	ExerciseType string
-	Notes        string
 }
 
 func (q *Queries) CreateExercise(ctx context.Context, arg CreateExerciseParams) (Exercise, error) {
-	row := q.db.QueryRowContext(ctx, createExercise, arg.Name, arg.ExerciseType, arg.Notes)
+	row := q.db.QueryRowContext(ctx, createExercise, arg.Name, arg.ExerciseType)
 	var i Exercise
-	err := row.Scan(
-		&i.ID,
-		&i.Name,
-		&i.ExerciseType,
-		&i.Notes,
-	)
+	err := row.Scan(&i.ID, &i.Name, &i.ExerciseType)
 	return i, err
 }

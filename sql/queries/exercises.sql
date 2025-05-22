@@ -1,9 +1,8 @@
 -- name: CreateExercise :one
-INSERT INTO exercises (id, name, exercise_type, notes)
+INSERT INTO exercises (id, name, exercise_type)
 VALUES (
 	gen_random_uuid(),
 	$1,
-	$2,
-	$3
+	$2
 )
 RETURNING *;

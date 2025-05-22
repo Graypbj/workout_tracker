@@ -24,7 +24,6 @@ type Exercise struct {
 	ID           uuid.UUID
 	Name         string
 	ExerciseType string
-	Notes        string
 }
 
 type RefreshToken struct {
