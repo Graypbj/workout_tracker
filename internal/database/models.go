@@ -13,30 +13,30 @@ import (
 
 type CardioSession struct {
 	ID         uuid.UUID
-	WorkoutID  uuid.NullUUID
-	ExerciseID uuid.NullUUID
-	Distance   sql.NullString
-	Time       sql.NullInt64
+	WorkoutID  uuid.UUID
+	ExerciseID uuid.UUID
+	Distance   string
+	Time       int64
 	Notes      sql.NullString
 }
 
 type Exercise struct {
 	ID           uuid.UUID
 	Name         string
-	ExerciseType sql.NullString
-	Notes        sql.NullString
+	ExerciseType string
+	Notes        string
 }
 
 type StrengthTrainingSession struct {
 	ID         uuid.UUID
-	WorkoutID  uuid.NullUUID
-	ExerciseID uuid.NullUUID
+	WorkoutID  uuid.UUID
+	ExerciseID uuid.UUID
 	Notes      sql.NullString
 }
 
 type StrengthTrainingSet struct {
 	ID        uuid.UUID
-	SessionID uuid.NullUUID
+	SessionID uuid.UUID
 	SetNumber int32
 	Reps      int32
 	Weight    string
@@ -52,8 +52,8 @@ type User struct {
 
 type Workout struct {
 	ID          uuid.UUID
-	UserID      uuid.NullUUID
-	WorkoutDate sql.NullTime
-	WorkoutType sql.NullString
+	UserID      uuid.UUID
+	WorkoutDate time.Time
+	WorkoutType string
 	Notes       sql.NullString
 }
