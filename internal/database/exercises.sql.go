@@ -7,19 +7,22 @@ package database
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 )
 
 const createExercise = `-- name: CreateExercise :one
-INSERT INTO exercises (id, user_id, name, exercise_type)
+INSERT INTO exercises (id, user_id, name, exercise_type, created_at, updated_at)
 VALUES (
 	gen_random_uuid(),
 	$1,
 	$2,
-	$3
+	$3,
+	NOW(),
+	NOW()
 )
-RETURNING id, user_id, name, exercise_type
+RETURNING id, user_id, name, exercise_type, created_at, updated_at
 `
 
 type CreateExerciseParams struct {
@@ -36,6 +39,48 @@ func (q *Queries) CreateExercise(ctx context.Context, arg CreateExerciseParams) 
 		&i.UserID,
 		&i.Name,
 		&i.ExerciseType,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const updateExercise = `-- name: UpdateExercise :one
+UPDATE exercises
+SET name = $3, exercise_type = $4
+WHERE id = $1 AND user_id = $2
+RETURNING id, name, exercise_type, created_at, updated_at
+`
+
+type UpdateExerciseParams struct {
+	ID           uuid.UUID
+	UserID       uuid.UUID
+	Name         string
+	ExerciseType string
+}
+
+type UpdateExerciseRow struct {
+	ID           uuid.UUID
+	Name         string
+	ExerciseType string
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
+}
+
+func (q *Queries) UpdateExercise(ctx context.Context, arg UpdateExerciseParams) (UpdateExerciseRow, error) {
+	row := q.db.QueryRowContext(ctx, updateExercise,
+		arg.ID,
+		arg.UserID,
+		arg.Name,
+		arg.ExerciseType,
+	)
+	var i UpdateExerciseRow
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.ExerciseType,
+		&i.CreatedAt,
+		&i.UpdatedAt,
 	)
 	return i, err
 }

@@ -65,7 +65,10 @@ func main() {
 	mux.HandleFunc("POST /api/refresh", apiCfg.handlerRefresh)
 	mux.HandleFunc("POST /api/revoke", apiCfg.handlerRevoke)
 
-	mux.HandleFunc("POST /api/exercises", apiCfg.handlerExerciseCreate)
+	mux.HandleFunc("POST /api/exercises", apiCfg.handlerExercisesCreate)
+	mux.HandleFunc("PUT /api/exercises", apiCfg.handlerExercisesUpdate)
+
+	mux.HandleFunc("POST /api/workouts", apiCfg.handlerWorkoutsCreate)
 
 	mux.HandleFunc("POST /api/login", apiCfg.handlerLogin)
 

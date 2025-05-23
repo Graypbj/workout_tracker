@@ -18,6 +18,8 @@ type CardioSession struct {
 	Distance   string
 	Time       int64
 	Notes      sql.NullString
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
 }
 
 type Exercise struct {
@@ -25,6 +27,8 @@ type Exercise struct {
 	UserID       uuid.UUID
 	Name         string
 	ExerciseType string
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
 }
 
 type RefreshToken struct {
@@ -41,6 +45,8 @@ type StrengthTrainingSession struct {
 	WorkoutID  uuid.UUID
 	ExerciseID uuid.UUID
 	Notes      sql.NullString
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
 }
 
 type StrengthTrainingSet struct {
@@ -49,6 +55,8 @@ type StrengthTrainingSet struct {
 	SetNumber int32
 	Reps      int32
 	Weight    string
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }
 
 type User struct {
@@ -65,4 +73,6 @@ type Workout struct {
 	WorkoutDate time.Time
 	WorkoutType string
 	Notes       sql.NullString
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }

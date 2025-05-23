@@ -5,7 +5,9 @@ CREATE TABLE cardio_sessions (
 	exercise_id UUID REFERENCES exercises(id) NOT NULL,
 	distance DECIMAL(6, 2) NOT NULL,
 	time INTERVAL NOT NULL,
-	notes TEXT
+	notes TEXT,
+	created_at TIMESTAMP DEFAULT NOW() NOT NULL,
+	updated_at TIMESTAMP DEFAULT NOW() NOT NULL
 );
 
 -- +goose Down

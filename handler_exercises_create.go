@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 
 	"github.com/Graypbj/workout_tracker/internal/auth"
 	"github.com/Graypbj/workout_tracker/internal/database"
@@ -14,9 +15,11 @@ type Exercise struct {
 	UserID       uuid.UUID `json:"user_id"`
 	Name         string    `json:"name"`
 	ExerciseType string    `json:"exercise_type"`
+	CreatedAt    time.Time `json:"created_at"`
+	UpdatedAt    time.Time `json:"updated_at"`
 }
 
-func (cfg *apiConfig) handlerExerciseCreate(w http.ResponseWriter, r *http.Request) {
+func (cfg *apiConfig) handlerExercisesCreate(w http.ResponseWriter, r *http.Request) {
 	type parameters struct {
 		Name         string `json:"name"`
 		ExerciseType string `json:"exercise_type"`
@@ -57,5 +60,7 @@ func (cfg *apiConfig) handlerExerciseCreate(w http.ResponseWriter, r *http.Reque
 		UserID:       exercise.UserID,
 		Name:         exercise.Name,
 		ExerciseType: exercise.ExerciseType,
+		CreatedAt:    exercise.CreatedAt,
+		UpdatedAt:    exercise.UpdatedAt,
 	})
 }
