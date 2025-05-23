@@ -22,6 +22,7 @@ type CardioSession struct {
 
 type Exercise struct {
 	ID           uuid.UUID
+	UserID       uuid.UUID
 	Name         string
 	ExerciseType string
 }

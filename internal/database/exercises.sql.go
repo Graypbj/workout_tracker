@@ -7,26 +7,35 @@ package database
 
 import (
 	"context"
+
+	"github.com/google/uuid"
 )
 
 const createExercise = `-- name: CreateExercise :one
-INSERT INTO exercises (id, name, exercise_type)
+INSERT INTO exercises (id, user_id, name, exercise_type)
 VALUES (
 	gen_random_uuid(),
 	$1,
-	$2
+	$2,
+	$3
 )
-RETURNING id, name, exercise_type
+RETURNING id, user_id, name, exercise_type
 `
 
 type CreateExerciseParams struct {
+	UserID       uuid.UUID
 	Name         string
 	ExerciseType string
 }
 
 func (q *Queries) CreateExercise(ctx context.Context, arg CreateExerciseParams) (Exercise, error) {
-	row := q.db.QueryRowContext(ctx, createExercise, arg.Name, arg.ExerciseType)
+	row := q.db.QueryRowContext(ctx, createExercise, arg.UserID, arg.Name, arg.ExerciseType)
 	var i Exercise
-	err := row.Scan(&i.ID, &i.Name, &i.ExerciseType)
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.Name,
+		&i.ExerciseType,
+	)
 	return i, err
 }
