@@ -48,11 +48,26 @@ func (q *Queries) CreateWorkout(ctx context.Context, arg CreateWorkoutParams) (W
 	return i, err
 }
 
+const deleteWorkout = `-- name: DeleteWorkout :exec
+DELETE FROM workouts
+WHERE id = $1 AND user_id = $2
+`
+
+type DeleteWorkoutParams struct {
+	ID     uuid.UUID
+	UserID uuid.UUID
+}
+
+func (q *Queries) DeleteWorkout(ctx context.Context, arg DeleteWorkoutParams) error {
+	_, err := q.db.ExecContext(ctx, deleteWorkout, arg.ID, arg.UserID)
+	return err
+}
+
 const updateWorkout = `-- name: UpdateWorkout :one
 UPDATE workouts
 SET workout_date = $3, workout_type = $4, notes = $5, updated_at = NOW()
 WHERE id = $1 AND user_id = $2
-RETURNING workout_date, workout_type, notes, created_at, updated_at
+RETURNING id, workout_date, workout_type, notes, created_at, updated_at
 `
 
 type UpdateWorkoutParams struct {
@@ -64,6 +79,7 @@ type UpdateWorkoutParams struct {
 }
 
 type UpdateWorkoutRow struct {
+	ID          uuid.UUID
 	WorkoutDate time.Time
 	WorkoutType string
 	Notes       sql.NullString
@@ -81,6 +97,7 @@ func (q *Queries) UpdateWorkout(ctx context.Context, arg UpdateWorkoutParams) (U
 	)
 	var i UpdateWorkoutRow
 	err := row.Scan(
+		&i.ID,
 		&i.WorkoutDate,
 		&i.WorkoutType,
 		&i.Notes,

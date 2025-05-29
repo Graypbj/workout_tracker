@@ -11,20 +11,16 @@ import (
 	"github.com/google/uuid"
 )
 
-type Workout struct {
-	ID          uuid.UUID `json:"id"`
-	UserID      uuid.UUID `json:"user_id"`
-	WorkoutDate time.Time `json:"workout_date"`
-	WorkoutType string    `json:"workout_type"`
-	Notes       string    `json:"notes"`
-	CreatedAt   time.Time `json:"created_at"`
-	UpdatedAt   time.Time `json:"updated_at"`
-}
-
-func (cfg *apiConfig) handlerWorkoutsCreate(w http.ResponseWriter, r *http.Request) {
+func (cfg *apiConfig) handlerWorkoutsUpdate(w http.ResponseWriter, r *http.Request) {
 	type parameters struct {
-		WorkoutType string `json:"workout_type"`
-		Notes       string `json:"notes"`
+		ID          uuid.UUID `json:"id"`
+		WorkoutDate time.Time `json:"workout_date"`
+		WorkoutType string    `json:"workout_type"`
+		Notes       string    `json:"notes"`
+	}
+
+	type response struct {
+		Workout
 	}
 
 	token, err := auth.GetBearerToken(r.Header)
@@ -47,8 +43,10 @@ func (cfg *apiConfig) handlerWorkoutsCreate(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	workout, err := cfg.db.CreateWorkout(r.Context(), database.CreateWorkoutParams{
+	workout, err := cfg.db.UpdateWorkout(r.Context(), database.UpdateWorkoutParams{
+		ID:          params.ID,
 		UserID:      userID,
+		WorkoutDate: params.WorkoutDate,
 		WorkoutType: params.WorkoutType,
 		Notes: sql.NullString{
 			String: params.Notes,
@@ -56,16 +54,18 @@ func (cfg *apiConfig) handlerWorkoutsCreate(w http.ResponseWriter, r *http.Reque
 		},
 	})
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "Couldn't create workout", err)
+		respondWithError(w, http.StatusInternalServerError, "Couldn't update workout", err)
 		return
 	}
 
-	respondWithJSON(w, http.StatusCreated, Workout{
-		ID:          workout.ID,
-		WorkoutDate: workout.WorkoutDate,
-		WorkoutType: workout.WorkoutType,
-		Notes:       workout.Notes.String,
-		CreatedAt:   workout.CreatedAt,
-		UpdatedAt:   workout.UpdatedAt,
+	respondWithJSON(w, http.StatusOK, response{
+		Workout: Workout{
+			ID:          workout.ID,
+			WorkoutDate: workout.WorkoutDate,
+			WorkoutType: workout.WorkoutType,
+			Notes:       workout.Notes.String,
+			CreatedAt:   workout.CreatedAt,
+			UpdatedAt:   workout.UpdatedAt,
+		},
 	})
 }

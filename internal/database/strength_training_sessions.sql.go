@@ -13,8 +13,9 @@ import (
 )
 
 const createStrengthTrainingSession = `-- name: CreateStrengthTrainingSession :one
-INSERT INTO strength_training_sessions (workout_id, exercise_id, notes, created_at, updated_at)
+INSERT INTO strength_training_sessions (id, workout_id, exercise_id, notes, created_at, updated_at)
 VALUES (
+	gen_random_uuid(),
 	$1,
 	$2,
 	$3,
@@ -32,6 +33,51 @@ type CreateStrengthTrainingSessionParams struct {
 
 func (q *Queries) CreateStrengthTrainingSession(ctx context.Context, arg CreateStrengthTrainingSessionParams) (StrengthTrainingSession, error) {
 	row := q.db.QueryRowContext(ctx, createStrengthTrainingSession, arg.WorkoutID, arg.ExerciseID, arg.Notes)
+	var i StrengthTrainingSession
+	err := row.Scan(
+		&i.ID,
+		&i.WorkoutID,
+		&i.ExerciseID,
+		&i.Notes,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const deleteStrengthTrainingSession = `-- name: DeleteStrengthTrainingSession :exec
+DELETE FROM strength_training_sessions
+WHERE id = $1
+`
+
+func (q *Queries) DeleteStrengthTrainingSession(ctx context.Context, id uuid.UUID) error {
+	_, err := q.db.ExecContext(ctx, deleteStrengthTrainingSession, id)
+	return err
+}
+
+const updateStrengthTrainingSession = `-- name: UpdateStrengthTrainingSession :one
+UPDATE strength_training_sessions
+SET workout_id = $3, exercise_id = $4, notes = $5, updated_at = NOW()
+WHERE workout_id = $1 AND exercise_id = $2
+RETURNING id, workout_id, exercise_id, notes, created_at, updated_at
+`
+
+type UpdateStrengthTrainingSessionParams struct {
+	WorkoutID    uuid.UUID
+	ExerciseID   uuid.UUID
+	WorkoutID_2  uuid.UUID
+	ExerciseID_2 uuid.UUID
+	Notes        sql.NullString
+}
+
+func (q *Queries) UpdateStrengthTrainingSession(ctx context.Context, arg UpdateStrengthTrainingSessionParams) (StrengthTrainingSession, error) {
+	row := q.db.QueryRowContext(ctx, updateStrengthTrainingSession,
+		arg.WorkoutID,
+		arg.ExerciseID,
+		arg.WorkoutID_2,
+		arg.ExerciseID_2,
+		arg.Notes,
+	)
 	var i StrengthTrainingSession
 	err := row.Scan(
 		&i.ID,

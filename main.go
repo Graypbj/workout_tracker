@@ -61,16 +61,27 @@ func main() {
 
 	mux.HandleFunc("POST /api/users", apiCfg.handlerUsersCreate)
 	mux.HandleFunc("PUT /api/users", apiCfg.handlerUsersUpdate)
-
-	mux.HandleFunc("POST /api/refresh", apiCfg.handlerRefresh)
-	mux.HandleFunc("POST /api/revoke", apiCfg.handlerRevoke)
+	mux.HandleFunc("DELETE /api/users", apiCfg.handlerUsersDelete)
 
 	mux.HandleFunc("POST /api/exercises", apiCfg.handlerExercisesCreate)
 	mux.HandleFunc("PUT /api/exercises", apiCfg.handlerExercisesUpdate)
+	mux.HandleFunc("DELETE /api/exercises", apiCfg.handlerExercisesDelete)
 
 	mux.HandleFunc("POST /api/workouts", apiCfg.handlerWorkoutsCreate)
+	mux.HandleFunc("PUT /api/workouts", apiCfg.handlerWorkoutsUpdate)
+	mux.HandleFunc("DELETE /api/workouts", apiCfg.handlerWorkoutsDelete)
+
+	mux.HandleFunc("POST /api/strengthTrainingSessions", apiCfg.handlerStrengthTrainingSessionsCreate)
+	mux.HandleFunc("PUT /api/strengthTrainingSessions", apiCfg.handlerStrengthTrainingSessionsUpdate)
+	mux.HandleFunc("DELETE /api/strengthTrainingSessions", apiCfg.handlerStrengthTrainingSessionsDelete)
+
+	mux.HandleFunc("POST /api/strengthTrainingSets", apiCfg.handlerStrengthTrainingSetsCreate)
+	mux.HandleFunc("PUT /api/strengthTrainingSets", apiCfg.handlerStrengthTrainingSetsUpdate)
+	mux.HandleFunc("DELETE /api/strengthTrainingSets", apiCfg.handlerStrengthTrainingSetsDelete)
 
 	mux.HandleFunc("POST /api/login", apiCfg.handlerLogin)
+	mux.HandleFunc("POST /api/refresh", apiCfg.handlerRefresh)
+	mux.HandleFunc("POST /api/revoke", apiCfg.handlerRevoke)
 
 	mux.HandleFunc("POST /admin/reset", apiCfg.handlerReset)
 	mux.HandleFunc("GET /admin/metrics", apiCfg.handlerCount)

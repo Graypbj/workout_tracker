@@ -20,3 +20,7 @@ SET password_hash = $2, email = $3, updated_at = NOW()
 WHERE id = $1
 RETURNING id, email, created_at, updated_at;
 
+-- name: DeleteUser :exec
+DELETE FROM users
+WHERE id = $1;
+

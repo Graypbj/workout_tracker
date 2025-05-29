@@ -45,9 +45,24 @@ func (q *Queries) CreateExercise(ctx context.Context, arg CreateExerciseParams) 
 	return i, err
 }
 
+const deleteExercise = `-- name: DeleteExercise :exec
+DELETE FROM exercises
+WHERE id = $1 AND user_id = $2
+`
+
+type DeleteExerciseParams struct {
+	ID     uuid.UUID
+	UserID uuid.UUID
+}
+
+func (q *Queries) DeleteExercise(ctx context.Context, arg DeleteExerciseParams) error {
+	_, err := q.db.ExecContext(ctx, deleteExercise, arg.ID, arg.UserID)
+	return err
+}
+
 const updateExercise = `-- name: UpdateExercise :one
 UPDATE exercises
-SET name = $3, exercise_type = $4
+SET name = $3, exercise_type = $4, updated_at = NOW()
 WHERE id = $1 AND user_id = $2
 RETURNING id, name, exercise_type, created_at, updated_at
 `

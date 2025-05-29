@@ -12,6 +12,11 @@ RETURNING *;
 
 -- name: UpdateExercise :one
 UPDATE exercises
-SET name = $3, exercise_type = $4
+SET name = $3, exercise_type = $4, updated_at = NOW()
 WHERE id = $1 AND user_id = $2
 RETURNING id, name, exercise_type, created_at, updated_at;
+
+-- name: DeleteExercise :exec
+DELETE FROM exercises
+WHERE id = $1 AND user_id = $2;
+

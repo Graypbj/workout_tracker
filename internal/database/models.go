@@ -51,6 +51,7 @@ type StrengthTrainingSession struct {
 
 type StrengthTrainingSet struct {
 	ID        uuid.UUID
+	UserID    uuid.UUID
 	SessionID uuid.UUID
 	SetNumber int32
 	Reps      int32
