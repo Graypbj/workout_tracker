@@ -21,3 +21,9 @@ RETURNING id, workout_date, workout_type, notes, created_at, updated_at;
 DELETE FROM workouts
 WHERE id = $1 AND user_id = $2;
 
+-- name: GetWorkout :many
+SELECT id, workout_date, workout_type, notes, created_at, updated_at
+FROM workouts
+WHERE user_id = $1
+ORDER BY workout_date asc;
+

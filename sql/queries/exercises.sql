@@ -20,3 +20,9 @@ RETURNING id, name, exercise_type, created_at, updated_at;
 DELETE FROM exercises
 WHERE id = $1 AND user_id = $2;
 
+-- name: GetExercise :many
+SELECT id, name, exercise_type, created_at, updated_at
+FROM exercises
+WHERE user_id = $1
+ORDER BY name asc;
+

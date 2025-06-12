@@ -63,6 +63,52 @@ func (q *Queries) DeleteWorkout(ctx context.Context, arg DeleteWorkoutParams) er
 	return err
 }
 
+const getWorkout = `-- name: GetWorkout :many
+SELECT id, workout_date, workout_type, notes, created_at, updated_at
+FROM workouts
+WHERE user_id = $1
+ORDER BY workout_date asc
+`
+
+type GetWorkoutRow struct {
+	ID          uuid.UUID
+	WorkoutDate time.Time
+	WorkoutType string
+	Notes       sql.NullString
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+}
+
+func (q *Queries) GetWorkout(ctx context.Context, userID uuid.UUID) ([]GetWorkoutRow, error) {
+	rows, err := q.db.QueryContext(ctx, getWorkout, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetWorkoutRow
+	for rows.Next() {
+		var i GetWorkoutRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.WorkoutDate,
+			&i.WorkoutType,
+			&i.Notes,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const updateWorkout = `-- name: UpdateWorkout :one
 UPDATE workouts
 SET workout_date = $3, workout_type = $4, notes = $5, updated_at = NOW()
