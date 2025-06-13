@@ -11,7 +11,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func (cfg *apiConfig) handlerCardioSessionsUpdate(w http.ResponseWriter, r *http.Request) {
+func (cfg *apiConfig) handlerCardioTrainingSessionsUpdate(w http.ResponseWriter, r *http.Request) {
 	type parameters struct {
 		ID       uuid.UUID `json:"id"`
 		Distance float64   `json:"distance"`
