@@ -637,3 +637,173 @@ All strength training set endpoints require authentication and operate within th
     *   `401 Unauthorized`: "Couldn't validate JWT"
     *   `500 Internal Server Error`: "Couldn't decode parameters"
     *   `500 Internal Server Error`: "Couldn't delete strength training set" (e.g., set not found or user mismatch)
+
+## Cardio Training Session Endpoints
+
+All cardio training session endpoints require authentication and operate within the context of the authenticated user.
+
+### 1. Create Cardio Training Session
+
+*   **HTTP Method and Path:** `POST /api/cardio_training_sessions`
+*   **Description:** Creates a new cardio training session.
+*   **Request Headers:**
+    *   `Authorization: Bearer <jwt_access_token>`
+*   **Request Body:**
+    ```json
+    {
+        "workout_id": "workout_uuid",
+        "exercise_id": "exercise_uuid_for_cardio", // e.g., ID for "Running" or "Cycling"
+        "distance": 5.2, // e.g., in kilometers or miles
+        "time": "45m30s", // Duration string, e.g., "1h", "30m", "1h2m3s"
+        "notes": "Felt strong, consistent pace."
+    }
+    ```
+*   **Response Body (Success - 201 Created):**
+    ```json
+    {
+        "cardio_training_session": {
+            "id": "new_cardio_session_uuid",
+            // "user_id": "user_uuid", // Not included in response
+            "workout_id": "workout_uuid",
+            "exercise_id": "exercise_uuid_for_cardio",
+            "distance": 5.2,
+            "time": 2730000000000, // Nanoseconds, equivalent to 45m30s
+            "notes": "Felt strong, consistent pace.",
+            "created_at": "timestamp",
+            "updated_at": "timestamp"
+        }
+    }
+    ```
+*   **Potential Error Responses:**
+    *   `401 Unauthorized`: "Couldn't find JWT"
+    *   `401 Unauthorized`: "Couldn't validate JWT"
+    *   `400 Bad Request`: "Couldn't decode parameters"
+    *   `400 Bad Request`: "Invalid time format (expecting duration like '1h2m3s')"
+    *   `500 Internal Server Error`: "Couldn't create cardio training session"
+
+### 2. Retrieve Cardio Training Sessions by Workout
+
+*   **HTTP Method and Path:** `GET /api/cardio_training_sessions?workout_id=<workout_uuid>`
+*   **Description:** Retrieves all cardio training sessions for a specific workout belonging to the authenticated user.
+*   **Request Headers:**
+    *   `Authorization: Bearer <jwt_access_token>`
+*   **Query Parameters:**
+    *   `workout_id` (required): The UUID of the workout.
+*   **Response Body (Success - 200 OK):**
+    ```json
+    {
+        "cardio_training_sessions": [
+            {
+                "id": "cardio_session_uuid_1",
+                // "user_id": "user_uuid", // Not included in response
+                "workout_id": "workout_uuid",
+                "exercise_id": "exercise_uuid_for_cardio",
+                "distance": 5.2,
+                "time": 2730000000000, // Nanoseconds
+                "notes": "Session 1 notes",
+                "created_at": "timestamp",
+                "updated_at": "timestamp"
+            }
+            // ... more sessions
+        ]
+    }
+    ```
+*   **Potential Error Responses:**
+    *   `401 Unauthorized`: "Couldn't find JWT"
+    *   `401 Unauthorized`: "Couldn't validate JWT"
+    *   `400 Bad Request`: "Missing workout_id query parameter"
+    *   `400 Bad Request`: "Invalid workout_id format"
+    *   `500 Internal Server Error`: "Couldn't retrieve cardio sessions"
+
+### 3. Update Cardio Training Session
+
+*   **HTTP Method and Path:** `PUT /api/cardio_training_sessions`
+*   **Description:** Updates an existing cardio training session. The session must belong to the authenticated user.
+*   **Request Headers:**
+    *   `Authorization: Bearer <jwt_access_token>`
+*   **Request Body:**
+    ```json
+    {
+        "id": "cardio_session_uuid_to_update",
+        "distance": 5.5,
+        "time": "46m15s",
+        "notes": "Improved distance and time slightly."
+    }
+    ```
+*   **Response Body (Success - 200 OK):**
+    ```json
+    {
+        "cardio_training_session": {
+            "id": "cardio_session_uuid_to_update",
+            // "user_id": "user_uuid", // Not included in response
+            "workout_id": "original_workout_uuid", // workout_id is part of response but not updatable here
+            "exercise_id": "original_exercise_uuid", // exercise_id is part of response but not updatable here
+            "distance": 5.5,
+            "time": 2775000000000, // Nanoseconds
+            "notes": "Improved distance and time slightly.",
+            "created_at": "original_timestamp",
+            "updated_at": "new_timestamp"
+        }
+    }
+    ```
+*   **Potential Error Responses:**
+    *   `401 Unauthorized`: "Couldn't find JWT"
+    *   `401 Unauthorized`: "Couldn't validate JWT"
+    *   `400 Bad Request`: "Couldn't decode parameters"
+    *   `400 Bad Request`: "Invalid time format (expecting duration like '1h2m3s')"
+    *   `500 Internal Server Error`: "Couldn't update cardio session" (e.g., session not found or user mismatch)
+
+### 4. Delete Cardio Training Session
+
+*   **HTTP Method and Path:** `DELETE /api/cardio_training_sessions`
+*   **Description:** Deletes a specific cardio training session. The session must belong to the authenticated user.
+*   **Request Headers:**
+    *   `Authorization: Bearer <jwt_access_token>`
+*   **Request Body:**
+    ```json
+    {
+        "id": "cardio_session_uuid_to_delete"
+    }
+    ```
+*   **Response Body (Success - 200 OK):**
+    *   Returns `null`.
+*   **Potential Error Responses:**
+    *   `401 Unauthorized`: "Couldn't find JWT"
+    *   `401 Unauthorized`: "Couldn't validate jwt" (Note: potential lowercase 'jwt' in error message)
+    *   `400 Bad Request`: "Couldn't decode parameters"
+    *   `500 Internal Server Error`: "Couldn't delete cardio training session" (e.g., session not found or user mismatch)
+
+## Admin Endpoints
+
+### 1. Reset Application State (Dev only)
+
+*   **HTTP Method and Path:** `POST /admin/reset`
+*   **Description:** Resets the application's file server hit counter to 0 and resets the database to its initial state.
+*   **Environment Restriction:** This endpoint is only functional if the `PLATFORM` environment variable is set to `"dev"`. Otherwise, it returns a `403 Forbidden`.
+*   **Request Body:** None.
+*   **Response Body (Success - 200 OK with `PLATFORM="dev"`):**
+    *   Plain text: "Hits reset to 0 and database reset to initial state."
+*   **Potential Error Responses:**
+    *   `403 Forbidden`: If `PLATFORM` is not "dev". (Response body: "Reset is only allowed in dev environment.")
+
+### 2. Metrics Display
+
+*   **HTTP Method and Path:** `GET /admin/metrics`
+*   **Description:** Displays an HTML page showing the number of times the application's file server (under `/app`) has been visited.
+*   **Note:** The HTML content refers to "Chirpy Admin". This appears to be a cosmetic leftover from a template or different project and doesn't affect functionality but could be updated for consistency with the "Workout Tracker" application.
+*   **Request Body:** None.
+*   **Response Body (Success - 200 OK):**
+    *   HTML content, for example:
+        ```html
+        <html>
+        <body>
+            <h1>Welcome, Chirpy Admin</h1>
+            <p>Chirpy has been visited 0 times!</p>
+        </body>
+        </html>
+        ```
+*   **Potential Error Responses:** None explicitly defined beyond standard HTTP server errors.
+
+---
+
+*End of API Endpoint Documentation.*
