@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"github.com/Graypbj/workout_tracker/internal/auth"
@@ -10,10 +9,6 @@ import (
 )
 
 func (cfg *apiConfig) handlerStrengthTrainingSetsRetrieve(w http.ResponseWriter, r *http.Request) {
-	type parameters struct {
-		SessionID uuid.UUID `json:"session_id"`
-	}
-
 	type response struct {
 		StrengthTrainingSets []StrengthTrainingSet `json:"strength_training_sets"`
 	}
@@ -30,16 +25,20 @@ func (cfg *apiConfig) handlerStrengthTrainingSetsRetrieve(w http.ResponseWriter,
 		return
 	}
 
-	var params parameters
-	decoder := json.NewDecoder(r.Body)
-	err = decoder.Decode(&params)
+	sessionIDStr := r.URL.Query().Get("session_id")
+	if sessionIDStr == "" {
+		respondWithError(w, http.StatusBadRequest, "Missing session_id query parameter", err)
+		return
+	}
+
+	sessionID, err := uuid.Parse(sessionIDStr)
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "Couldn't decode parameters", err)
+		respondWithError(w, http.StatusBadRequest, "Invalid workout_id format", err)
 		return
 	}
 
 	dbSets, err := cfg.db.ListStrengthTrainingSetsBySession(r.Context(), database.ListStrengthTrainingSetsBySessionParams{
-		SessionID: params.SessionID,
+		SessionID: sessionID,
 		UserID:    userID,
 	})
 	if err != nil {

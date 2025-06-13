@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"github.com/Graypbj/workout_tracker/internal/auth"
@@ -9,10 +8,6 @@ import (
 )
 
 func (cfg *apiConfig) handlerStrengthTrainingSessionsRetrieve(w http.ResponseWriter, r *http.Request) {
-	type parameters struct {
-		WorkoutID uuid.UUID `json:"workout_id"`
-	}
-
 	type response struct {
 		StrengthTrainingSessions []StrengthTrainingSession `json:"strength_training_sessions"`
 	}
@@ -29,22 +24,26 @@ func (cfg *apiConfig) handlerStrengthTrainingSessionsRetrieve(w http.ResponseWri
 		return
 	}
 
-	var params parameters
-	decoder := json.NewDecoder(r.Body)
-	err = decoder.Decode(&params)
-	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "Couldn't decode parameters", err)
+	worktoutIDStr := r.URL.Query().Get("workout_id")
+	if worktoutIDStr == "" {
+		respondWithError(w, http.StatusBadRequest, "Missing workout_id query parameter", err)
 		return
 	}
 
-	dbSessions, err := cfg.db.ListStrengthTrainingSessionsByWorkout(r.Context(), params.WorkoutID)
+	workoutID, err := uuid.Parse(worktoutIDStr)
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid workout_id format", err)
+		return
+	}
+
+	dbStrengthTrainingSessions, err := cfg.db.ListStrengthTrainingSessionsByWorkout(r.Context(), workoutID)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Couldn't retrieve strength training sessions", err)
 		return
 	}
 
-	sessions := make([]StrengthTrainingSession, len(dbSessions))
-	for i, dbSess := range dbSessions {
+	sessions := make([]StrengthTrainingSession, len(dbStrengthTrainingSessions))
+	for i, dbSess := range dbStrengthTrainingSessions {
 		sessions[i] = StrengthTrainingSession{
 			ID:         dbSess.ID,
 			WorkoutID:  dbSess.WorkoutID,
