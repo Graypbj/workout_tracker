@@ -41,7 +41,7 @@ func (cfg *apiConfig) handlerStrengthTrainingSetsUpdate(w http.ResponseWriter, r
 		return
 	}
 
-	strengthTrainingSet, err := cfg.db.UpdateStrengthTrainingSet(r.Context(), database.UpdateStrengthTrainingSetParams{
+	strengthTrainingSet, err := cfg.db.UpdateStrengthTrainingSetByID(r.Context(), database.UpdateStrengthTrainingSetByIDParams{
 		ID:        params.ID,
 		UserID:    userID,
 		SetNumber: params.SetNumber,

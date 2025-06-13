@@ -66,18 +66,27 @@ func main() {
 	mux.HandleFunc("POST /api/exercises", apiCfg.handlerExercisesCreate)
 	mux.HandleFunc("PUT /api/exercises", apiCfg.handlerExercisesUpdate)
 	mux.HandleFunc("DELETE /api/exercises", apiCfg.handlerExercisesDelete)
+	mux.HandleFunc("GET /api/exercises", apiCfg.handlerExercisesRetrieve)
 
 	mux.HandleFunc("POST /api/workouts", apiCfg.handlerWorkoutsCreate)
 	mux.HandleFunc("PUT /api/workouts", apiCfg.handlerWorkoutsUpdate)
 	mux.HandleFunc("DELETE /api/workouts", apiCfg.handlerWorkoutsDelete)
+	mux.HandleFunc("GET /api/workouts", apiCfg.handlerWorkoutsRetrieve)
 
-	mux.HandleFunc("POST /api/strengthTrainingSessions", apiCfg.handlerStrengthTrainingSessionsCreate)
-	mux.HandleFunc("PUT /api/strengthTrainingSessions", apiCfg.handlerStrengthTrainingSessionsUpdate)
-	mux.HandleFunc("DELETE /api/strengthTrainingSessions", apiCfg.handlerStrengthTrainingSessionsDelete)
+	mux.HandleFunc("POST /api/strength_training_sessions", apiCfg.handlerStrengthTrainingSessionsCreate)
+	mux.HandleFunc("PUT /api/strength_training_sessions", apiCfg.handlerStrengthTrainingSessionsUpdate)
+	mux.HandleFunc("DELETE /api/strength_training_sessions", apiCfg.handlerStrengthTrainingSessionsDelete)
+	mux.HandleFunc("GET /api/strength_training_sessions", apiCfg.handlerStrengthTrainingSessionsRetrieve)
 
-	mux.HandleFunc("POST /api/strengthTrainingSets", apiCfg.handlerStrengthTrainingSetsCreate)
-	mux.HandleFunc("PUT /api/strengthTrainingSets", apiCfg.handlerStrengthTrainingSetsUpdate)
-	mux.HandleFunc("DELETE /api/strengthTrainingSets", apiCfg.handlerStrengthTrainingSetsDelete)
+	mux.HandleFunc("POST /api/strength_training_sets", apiCfg.handlerStrengthTrainingSetsCreate)
+	mux.HandleFunc("PUT /api/strength_training_sets", apiCfg.handlerStrengthTrainingSetsUpdate)
+	mux.HandleFunc("DELETE /api/strength_training_sets", apiCfg.handlerStrengthTrainingSetsDelete)
+	mux.HandleFunc("GET /api/strength_training_sets", apiCfg.handlerStrengthTrainingSetsRetrieve)
+
+	mux.HandleFunc("POST /api/cardio_training_sessions", apiCfg.handlerCardioTrainingSessionsCreate)
+	mux.HandleFunc("PUT /api/cardio_training_sessions", apiCfg.handlerCardioTrainingSessionsUpdate)
+	mux.HandleFunc("DELETE /api/cardio_training_sessions", apiCfg.handlerCardioTrainingSessionsDelete)
+	mux.HandleFunc("GET /api/cardio_training_sessions", apiCfg.handlerCardioTrainingSessionsRetrieve)
 
 	mux.HandleFunc("POST /api/login", apiCfg.handlerLogin)
 	mux.HandleFunc("POST /api/refresh", apiCfg.handlerRefresh)

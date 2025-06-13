@@ -34,7 +34,7 @@ func (cfg *apiConfig) handlerExercisesDelete(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	err = cfg.db.DeleteExercise(r.Context(), database.DeleteExerciseParams{
+	err = cfg.db.DeleteExerciseByID(r.Context(), database.DeleteExerciseByIDParams{
 		ID:     params.ID,
 		UserID: userID,
 	})

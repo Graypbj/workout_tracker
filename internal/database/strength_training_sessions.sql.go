@@ -8,34 +8,43 @@ package database
 import (
 	"context"
 	"database/sql"
+	"time"
 
 	"github.com/google/uuid"
 )
 
 const createStrengthTrainingSession = `-- name: CreateStrengthTrainingSession :one
-INSERT INTO strength_training_sessions (id, workout_id, exercise_id, notes, created_at, updated_at)
+INSERT INTO strength_training_sessions (id, user_id, workout_id, exercise_id, notes, created_at, updated_at)
 VALUES (
 	gen_random_uuid(),
 	$1,
 	$2,
 	$3,
+	$4,
 	NOW(),
 	NOW()
 )
-RETURNING id, workout_id, exercise_id, notes, created_at, updated_at
+RETURNING id, user_id, workout_id, exercise_id, notes, created_at, updated_at
 `
 
 type CreateStrengthTrainingSessionParams struct {
+	UserID     uuid.UUID
 	WorkoutID  uuid.UUID
 	ExerciseID uuid.UUID
 	Notes      sql.NullString
 }
 
 func (q *Queries) CreateStrengthTrainingSession(ctx context.Context, arg CreateStrengthTrainingSessionParams) (StrengthTrainingSession, error) {
-	row := q.db.QueryRowContext(ctx, createStrengthTrainingSession, arg.WorkoutID, arg.ExerciseID, arg.Notes)
+	row := q.db.QueryRowContext(ctx, createStrengthTrainingSession,
+		arg.UserID,
+		arg.WorkoutID,
+		arg.ExerciseID,
+		arg.Notes,
+	)
 	var i StrengthTrainingSession
 	err := row.Scan(
 		&i.ID,
+		&i.UserID,
 		&i.WorkoutID,
 		&i.ExerciseID,
 		&i.Notes,
@@ -45,40 +54,99 @@ func (q *Queries) CreateStrengthTrainingSession(ctx context.Context, arg CreateS
 	return i, err
 }
 
-const deleteStrengthTrainingSession = `-- name: DeleteStrengthTrainingSession :exec
+const deleteStrengthTrainingSessionByID = `-- name: DeleteStrengthTrainingSessionByID :exec
 DELETE FROM strength_training_sessions
-WHERE id = $1
+WHERE id = $1 AND user_id = $2
 `
 
-func (q *Queries) DeleteStrengthTrainingSession(ctx context.Context, id uuid.UUID) error {
-	_, err := q.db.ExecContext(ctx, deleteStrengthTrainingSession, id)
+type DeleteStrengthTrainingSessionByIDParams struct {
+	ID     uuid.UUID
+	UserID uuid.UUID
+}
+
+func (q *Queries) DeleteStrengthTrainingSessionByID(ctx context.Context, arg DeleteStrengthTrainingSessionByIDParams) error {
+	_, err := q.db.ExecContext(ctx, deleteStrengthTrainingSessionByID, arg.ID, arg.UserID)
 	return err
 }
 
-const updateStrengthTrainingSession = `-- name: UpdateStrengthTrainingSession :one
+const listStrengthTrainingSessionsByWorkout = `-- name: ListStrengthTrainingSessionsByWorkout :many
+SELECT id, workout_id, exercise_id, notes, created_at, updated_at
+FROM strength_training_sessions
+WHERE workout_id = $1
+`
+
+type ListStrengthTrainingSessionsByWorkoutRow struct {
+	ID         uuid.UUID
+	WorkoutID  uuid.UUID
+	ExerciseID uuid.UUID
+	Notes      sql.NullString
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
+}
+
+func (q *Queries) ListStrengthTrainingSessionsByWorkout(ctx context.Context, workoutID uuid.UUID) ([]ListStrengthTrainingSessionsByWorkoutRow, error) {
+	rows, err := q.db.QueryContext(ctx, listStrengthTrainingSessionsByWorkout, workoutID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListStrengthTrainingSessionsByWorkoutRow
+	for rows.Next() {
+		var i ListStrengthTrainingSessionsByWorkoutRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.WorkoutID,
+			&i.ExerciseID,
+			&i.Notes,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const updateStrengthTrainingSessionByID = `-- name: UpdateStrengthTrainingSessionByID :one
 UPDATE strength_training_sessions
 SET workout_id = $3, exercise_id = $4, notes = $5, updated_at = NOW()
-WHERE workout_id = $1 AND exercise_id = $2
+WHERE id = $1 AND user_id = $2
 RETURNING id, workout_id, exercise_id, notes, created_at, updated_at
 `
 
-type UpdateStrengthTrainingSessionParams struct {
-	WorkoutID    uuid.UUID
-	ExerciseID   uuid.UUID
-	WorkoutID_2  uuid.UUID
-	ExerciseID_2 uuid.UUID
-	Notes        sql.NullString
+type UpdateStrengthTrainingSessionByIDParams struct {
+	ID         uuid.UUID
+	UserID     uuid.UUID
+	WorkoutID  uuid.UUID
+	ExerciseID uuid.UUID
+	Notes      sql.NullString
 }
 
-func (q *Queries) UpdateStrengthTrainingSession(ctx context.Context, arg UpdateStrengthTrainingSessionParams) (StrengthTrainingSession, error) {
-	row := q.db.QueryRowContext(ctx, updateStrengthTrainingSession,
+type UpdateStrengthTrainingSessionByIDRow struct {
+	ID         uuid.UUID
+	WorkoutID  uuid.UUID
+	ExerciseID uuid.UUID
+	Notes      sql.NullString
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
+}
+
+func (q *Queries) UpdateStrengthTrainingSessionByID(ctx context.Context, arg UpdateStrengthTrainingSessionByIDParams) (UpdateStrengthTrainingSessionByIDRow, error) {
+	row := q.db.QueryRowContext(ctx, updateStrengthTrainingSessionByID,
+		arg.ID,
+		arg.UserID,
 		arg.WorkoutID,
 		arg.ExerciseID,
-		arg.WorkoutID_2,
-		arg.ExerciseID_2,
 		arg.Notes,
 	)
-	var i StrengthTrainingSession
+	var i UpdateStrengthTrainingSessionByIDRow
 	err := row.Scan(
 		&i.ID,
 		&i.WorkoutID,

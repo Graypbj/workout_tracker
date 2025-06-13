@@ -45,29 +45,33 @@ func (q *Queries) CreateExercise(ctx context.Context, arg CreateExerciseParams) 
 	return i, err
 }
 
-const deleteExercise = `-- name: DeleteExercise :exec
+const deleteExerciseByID = `-- name: DeleteExerciseByID :exec
 DELETE FROM exercises
 WHERE id = $1 AND user_id = $2
 `
 
-type DeleteExerciseParams struct {
+type DeleteExerciseByIDParams struct {
 	ID     uuid.UUID
 	UserID uuid.UUID
 }
 
-func (q *Queries) DeleteExercise(ctx context.Context, arg DeleteExerciseParams) error {
-	_, err := q.db.ExecContext(ctx, deleteExercise, arg.ID, arg.UserID)
+func (q *Queries) DeleteExerciseByID(ctx context.Context, arg DeleteExerciseByIDParams) error {
+	_, err := q.db.ExecContext(ctx, deleteExerciseByID, arg.ID, arg.UserID)
 	return err
 }
 
-const getExercise = `-- name: GetExercise :many
+const getExerciseByID = `-- name: GetExerciseByID :one
 SELECT id, name, exercise_type, created_at, updated_at
 FROM exercises
-WHERE user_id = $1
-ORDER BY name asc
+WHERE id = $1 AND user_id = $2
 `
 
-type GetExerciseRow struct {
+type GetExerciseByIDParams struct {
+	ID     uuid.UUID
+	UserID uuid.UUID
+}
+
+type GetExerciseByIDRow struct {
 	ID           uuid.UUID
 	Name         string
 	ExerciseType string
@@ -75,15 +79,43 @@ type GetExerciseRow struct {
 	UpdatedAt    time.Time
 }
 
-func (q *Queries) GetExercise(ctx context.Context, userID uuid.UUID) ([]GetExerciseRow, error) {
-	rows, err := q.db.QueryContext(ctx, getExercise, userID)
+func (q *Queries) GetExerciseByID(ctx context.Context, arg GetExerciseByIDParams) (GetExerciseByIDRow, error) {
+	row := q.db.QueryRowContext(ctx, getExerciseByID, arg.ID, arg.UserID)
+	var i GetExerciseByIDRow
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.ExerciseType,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const listExercisesByUser = `-- name: ListExercisesByUser :many
+SELECT id, name, exercise_type, created_at, updated_at
+FROM exercises
+WHERE user_id = $1
+ORDER BY name ASC
+`
+
+type ListExercisesByUserRow struct {
+	ID           uuid.UUID
+	Name         string
+	ExerciseType string
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
+}
+
+func (q *Queries) ListExercisesByUser(ctx context.Context, userID uuid.UUID) ([]ListExercisesByUserRow, error) {
+	rows, err := q.db.QueryContext(ctx, listExercisesByUser, userID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GetExerciseRow
+	var items []ListExercisesByUserRow
 	for rows.Next() {
-		var i GetExerciseRow
+		var i ListExercisesByUserRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.Name,
@@ -104,21 +136,21 @@ func (q *Queries) GetExercise(ctx context.Context, userID uuid.UUID) ([]GetExerc
 	return items, nil
 }
 
-const updateExercise = `-- name: UpdateExercise :one
+const updateExerciseByID = `-- name: UpdateExerciseByID :one
 UPDATE exercises
 SET name = $3, exercise_type = $4, updated_at = NOW()
 WHERE id = $1 AND user_id = $2
 RETURNING id, name, exercise_type, created_at, updated_at
 `
 
-type UpdateExerciseParams struct {
+type UpdateExerciseByIDParams struct {
 	ID           uuid.UUID
 	UserID       uuid.UUID
 	Name         string
 	ExerciseType string
 }
 
-type UpdateExerciseRow struct {
+type UpdateExerciseByIDRow struct {
 	ID           uuid.UUID
 	Name         string
 	ExerciseType string
@@ -126,14 +158,14 @@ type UpdateExerciseRow struct {
 	UpdatedAt    time.Time
 }
 
-func (q *Queries) UpdateExercise(ctx context.Context, arg UpdateExerciseParams) (UpdateExerciseRow, error) {
-	row := q.db.QueryRowContext(ctx, updateExercise,
+func (q *Queries) UpdateExerciseByID(ctx context.Context, arg UpdateExerciseByIDParams) (UpdateExerciseByIDRow, error) {
+	row := q.db.QueryRowContext(ctx, updateExerciseByID,
 		arg.ID,
 		arg.UserID,
 		arg.Name,
 		arg.ExerciseType,
 	)
-	var i UpdateExerciseRow
+	var i UpdateExerciseByIDRow
 	err := row.Scan(
 		&i.ID,
 		&i.Name,

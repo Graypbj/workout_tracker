@@ -13,9 +13,10 @@ import (
 
 type CardioSession struct {
 	ID         uuid.UUID
+	UserID     uuid.UUID
 	WorkoutID  uuid.UUID
 	ExerciseID uuid.UUID
-	Distance   string
+	Distance   float64
 	Time       int64
 	Notes      sql.NullString
 	CreatedAt  time.Time
@@ -42,6 +43,7 @@ type RefreshToken struct {
 
 type StrengthTrainingSession struct {
 	ID         uuid.UUID
+	UserID     uuid.UUID
 	WorkoutID  uuid.UUID
 	ExerciseID uuid.UUID
 	Notes      sql.NullString

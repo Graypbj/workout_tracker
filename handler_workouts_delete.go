@@ -34,7 +34,7 @@ func (cfg *apiConfig) handlerWorkoutsDelete(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	err = cfg.db.DeleteWorkout(r.Context(), database.DeleteWorkoutParams{
+	err = cfg.db.DeleteWorkoutByID(r.Context(), database.DeleteWorkoutByIDParams{
 		ID:     params.ID,
 		UserID: userID,
 	})

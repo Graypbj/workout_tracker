@@ -48,29 +48,33 @@ func (q *Queries) CreateWorkout(ctx context.Context, arg CreateWorkoutParams) (W
 	return i, err
 }
 
-const deleteWorkout = `-- name: DeleteWorkout :exec
+const deleteWorkoutByID = `-- name: DeleteWorkoutByID :exec
 DELETE FROM workouts
 WHERE id = $1 AND user_id = $2
 `
 
-type DeleteWorkoutParams struct {
+type DeleteWorkoutByIDParams struct {
 	ID     uuid.UUID
 	UserID uuid.UUID
 }
 
-func (q *Queries) DeleteWorkout(ctx context.Context, arg DeleteWorkoutParams) error {
-	_, err := q.db.ExecContext(ctx, deleteWorkout, arg.ID, arg.UserID)
+func (q *Queries) DeleteWorkoutByID(ctx context.Context, arg DeleteWorkoutByIDParams) error {
+	_, err := q.db.ExecContext(ctx, deleteWorkoutByID, arg.ID, arg.UserID)
 	return err
 }
 
-const getWorkout = `-- name: GetWorkout :many
+const getWorkoutByID = `-- name: GetWorkoutByID :many
 SELECT id, workout_date, workout_type, notes, created_at, updated_at
 FROM workouts
-WHERE user_id = $1
-ORDER BY workout_date asc
+WHERE id = $1 AND user_id = $2
 `
 
-type GetWorkoutRow struct {
+type GetWorkoutByIDParams struct {
+	ID     uuid.UUID
+	UserID uuid.UUID
+}
+
+type GetWorkoutByIDRow struct {
 	ID          uuid.UUID
 	WorkoutDate time.Time
 	WorkoutType string
@@ -79,15 +83,15 @@ type GetWorkoutRow struct {
 	UpdatedAt   time.Time
 }
 
-func (q *Queries) GetWorkout(ctx context.Context, userID uuid.UUID) ([]GetWorkoutRow, error) {
-	rows, err := q.db.QueryContext(ctx, getWorkout, userID)
+func (q *Queries) GetWorkoutByID(ctx context.Context, arg GetWorkoutByIDParams) ([]GetWorkoutByIDRow, error) {
+	rows, err := q.db.QueryContext(ctx, getWorkoutByID, arg.ID, arg.UserID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GetWorkoutRow
+	var items []GetWorkoutByIDRow
 	for rows.Next() {
-		var i GetWorkoutRow
+		var i GetWorkoutByIDRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.WorkoutDate,
@@ -109,22 +113,14 @@ func (q *Queries) GetWorkout(ctx context.Context, userID uuid.UUID) ([]GetWorkou
 	return items, nil
 }
 
-const updateWorkout = `-- name: UpdateWorkout :one
-UPDATE workouts
-SET workout_date = $3, workout_type = $4, notes = $5, updated_at = NOW()
-WHERE id = $1 AND user_id = $2
-RETURNING id, workout_date, workout_type, notes, created_at, updated_at
+const listWorkoutsByUser = `-- name: ListWorkoutsByUser :many
+SELECT id, workout_date, workout_type, notes, created_at, updated_at
+FROM workouts
+WHERE user_id = $1
+ORDER BY workout_date ASC
 `
 
-type UpdateWorkoutParams struct {
-	ID          uuid.UUID
-	UserID      uuid.UUID
-	WorkoutDate time.Time
-	WorkoutType string
-	Notes       sql.NullString
-}
-
-type UpdateWorkoutRow struct {
+type ListWorkoutsByUserRow struct {
 	ID          uuid.UUID
 	WorkoutDate time.Time
 	WorkoutType string
@@ -133,15 +129,69 @@ type UpdateWorkoutRow struct {
 	UpdatedAt   time.Time
 }
 
-func (q *Queries) UpdateWorkout(ctx context.Context, arg UpdateWorkoutParams) (UpdateWorkoutRow, error) {
-	row := q.db.QueryRowContext(ctx, updateWorkout,
+func (q *Queries) ListWorkoutsByUser(ctx context.Context, userID uuid.UUID) ([]ListWorkoutsByUserRow, error) {
+	rows, err := q.db.QueryContext(ctx, listWorkoutsByUser, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListWorkoutsByUserRow
+	for rows.Next() {
+		var i ListWorkoutsByUserRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.WorkoutDate,
+			&i.WorkoutType,
+			&i.Notes,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const updateWorkoutByID = `-- name: UpdateWorkoutByID :one
+UPDATE workouts
+SET workout_date = $3, workout_type = $4, notes = $5, updated_at = NOW()
+WHERE id = $1 AND user_id = $2
+RETURNING id, workout_date, workout_type, notes, created_at, updated_at
+`
+
+type UpdateWorkoutByIDParams struct {
+	ID          uuid.UUID
+	UserID      uuid.UUID
+	WorkoutDate time.Time
+	WorkoutType string
+	Notes       sql.NullString
+}
+
+type UpdateWorkoutByIDRow struct {
+	ID          uuid.UUID
+	WorkoutDate time.Time
+	WorkoutType string
+	Notes       sql.NullString
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+}
+
+func (q *Queries) UpdateWorkoutByID(ctx context.Context, arg UpdateWorkoutByIDParams) (UpdateWorkoutByIDRow, error) {
+	row := q.db.QueryRowContext(ctx, updateWorkoutByID,
 		arg.ID,
 		arg.UserID,
 		arg.WorkoutDate,
 		arg.WorkoutType,
 		arg.Notes,
 	)
-	var i UpdateWorkoutRow
+	var i UpdateWorkoutByIDRow
 	err := row.Scan(
 		&i.ID,
 		&i.WorkoutDate,

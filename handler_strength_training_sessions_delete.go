@@ -20,7 +20,7 @@ func (cfg *apiConfig) handlerStrengthTrainingSessionsDelete(w http.ResponseWrite
 		return
 	}
 
-	err = cfg.db.DeleteStrengthTrainingSession(r.Context(), params.ID)
+	err = cfg.db.DeleteStrengthTrainingSessionByID(r.Context(), params.ID)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Couldn't delete strength training session", err)
 		return

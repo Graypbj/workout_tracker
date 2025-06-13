@@ -43,7 +43,7 @@ func (cfg *apiConfig) handlerWorkoutsUpdate(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	workout, err := cfg.db.UpdateWorkout(r.Context(), database.UpdateWorkoutParams{
+	workout, err := cfg.db.UpdateWorkoutByID(r.Context(), database.UpdateWorkoutByIDParams{
 		ID:          params.ID,
 		UserID:      userID,
 		WorkoutDate: params.WorkoutDate,

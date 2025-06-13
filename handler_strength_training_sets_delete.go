@@ -34,7 +34,7 @@ func (cfg *apiConfig) handlerStrengthTrainingSetsDelete(w http.ResponseWriter, r
 		return
 	}
 
-	err = cfg.db.DeleteStrengthTrainingSet(r.Context(), database.DeleteStrengthTrainingSetParams{
+	err = cfg.db.DeleteStrengthTrainingSetByID(r.Context(), database.DeleteStrengthTrainingSetByIDParams{
 		ID:     params.ID,
 		UserID: userID,
 	})

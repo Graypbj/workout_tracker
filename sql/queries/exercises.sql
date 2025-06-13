@@ -10,19 +10,24 @@ VALUES (
 )
 RETURNING *;
 
--- name: UpdateExercise :one
+-- name: UpdateExerciseByID :one
 UPDATE exercises
 SET name = $3, exercise_type = $4, updated_at = NOW()
 WHERE id = $1 AND user_id = $2
 RETURNING id, name, exercise_type, created_at, updated_at;
 
--- name: DeleteExercise :exec
+-- name: DeleteExerciseByID :exec
 DELETE FROM exercises
 WHERE id = $1 AND user_id = $2;
 
--- name: GetExercise :many
+-- name: ListExercisesByUser :many
 SELECT id, name, exercise_type, created_at, updated_at
 FROM exercises
 WHERE user_id = $1
-ORDER BY name asc;
+ORDER BY name ASC;
+
+-- name: GetExerciseByID :one
+SELECT id, name, exercise_type, created_at, updated_at
+FROM exercises
+WHERE id = $1 AND user_id = $2;
 

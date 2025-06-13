@@ -1,6 +1,7 @@
 -- +goose Up
 CREATE TABLE cardio_sessions (
 	id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+	user_id UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL,
 	workout_id UUID REFERENCES workouts(id) ON DELETE CASCADE NOT NULL,
 	exercise_id UUID REFERENCES exercises(id) NOT NULL,
 	distance DECIMAL(6, 2) NOT NULL,
@@ -12,4 +13,3 @@ CREATE TABLE cardio_sessions (
 
 -- +goose Down
 DROP TABLE cardio_sessions;
-

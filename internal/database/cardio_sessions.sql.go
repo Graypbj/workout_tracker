@@ -8,34 +8,39 @@ package database
 import (
 	"context"
 	"database/sql"
+	"time"
 
 	"github.com/google/uuid"
 )
 
 const createCardioSession = `-- name: CreateCardioSession :one
-INSERT INTO cardio_sessions (workout_id, exercise_id, distance, time, notes, created_at, updated_at)
+INSERT INTO cardio_sessions (id, user_id, workout_id, exercise_id, distance, time, notes, created_at, updated_at)
 VALUES (
+	gen_random_uuid(),
 	$1,
 	$2,
 	$3,
 	$4,
 	$5,
+	$6,
 	NOW(),
 	NOW()
 )
-RETURNING id, workout_id, exercise_id, distance, time, notes, created_at, updated_at
+RETURNING id, user_id, workout_id, exercise_id, distance, time, notes, created_at, updated_at
 `
 
 type CreateCardioSessionParams struct {
+	UserID     uuid.UUID
 	WorkoutID  uuid.UUID
 	ExerciseID uuid.UUID
-	Distance   string
+	Distance   float64
 	Time       int64
 	Notes      sql.NullString
 }
 
 func (q *Queries) CreateCardioSession(ctx context.Context, arg CreateCardioSessionParams) (CardioSession, error) {
 	row := q.db.QueryRowContext(ctx, createCardioSession,
+		arg.UserID,
 		arg.WorkoutID,
 		arg.ExerciseID,
 		arg.Distance,
@@ -43,6 +48,124 @@ func (q *Queries) CreateCardioSession(ctx context.Context, arg CreateCardioSessi
 		arg.Notes,
 	)
 	var i CardioSession
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.WorkoutID,
+		&i.ExerciseID,
+		&i.Distance,
+		&i.Time,
+		&i.Notes,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const deleteCardioSessionByID = `-- name: DeleteCardioSessionByID :exec
+DELETE FROM cardio_sessions
+WHERE id = $1 AND user_id = $2
+`
+
+type DeleteCardioSessionByIDParams struct {
+	ID     uuid.UUID
+	UserID uuid.UUID
+}
+
+func (q *Queries) DeleteCardioSessionByID(ctx context.Context, arg DeleteCardioSessionByIDParams) error {
+	_, err := q.db.ExecContext(ctx, deleteCardioSessionByID, arg.ID, arg.UserID)
+	return err
+}
+
+const listCardioSessionsByWorkout = `-- name: ListCardioSessionsByWorkout :many
+SELECT id, workout_id, exercise_id, distance, time, notes, created_at, updated_at
+FROM cardio_sessions
+WHERE workout_id = $1 AND user_id = $2
+`
+
+type ListCardioSessionsByWorkoutParams struct {
+	WorkoutID uuid.UUID
+	UserID    uuid.UUID
+}
+
+type ListCardioSessionsByWorkoutRow struct {
+	ID         uuid.UUID
+	WorkoutID  uuid.UUID
+	ExerciseID uuid.UUID
+	Distance   float64
+	Time       int64
+	Notes      sql.NullString
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
+}
+
+func (q *Queries) ListCardioSessionsByWorkout(ctx context.Context, arg ListCardioSessionsByWorkoutParams) ([]ListCardioSessionsByWorkoutRow, error) {
+	rows, err := q.db.QueryContext(ctx, listCardioSessionsByWorkout, arg.WorkoutID, arg.UserID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListCardioSessionsByWorkoutRow
+	for rows.Next() {
+		var i ListCardioSessionsByWorkoutRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.WorkoutID,
+			&i.ExerciseID,
+			&i.Distance,
+			&i.Time,
+			&i.Notes,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const updateCardioSessionByID = `-- name: UpdateCardioSessionByID :one
+UPDATE cardio_sessions
+SET distance = $3, time = $4, notes = $5, updated_at = NOW()
+WHERE id = $1 AND user_id = $2
+RETURNING id, workout_id, exercise_id, distance, time, notes, created_at, updated_at
+`
+
+type UpdateCardioSessionByIDParams struct {
+	ID       uuid.UUID
+	UserID   uuid.UUID
+	Distance float64
+	Time     int64
+	Notes    sql.NullString
+}
+
+type UpdateCardioSessionByIDRow struct {
+	ID         uuid.UUID
+	WorkoutID  uuid.UUID
+	ExerciseID uuid.UUID
+	Distance   float64
+	Time       int64
+	Notes      sql.NullString
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
+}
+
+func (q *Queries) UpdateCardioSessionByID(ctx context.Context, arg UpdateCardioSessionByIDParams) (UpdateCardioSessionByIDRow, error) {
+	row := q.db.QueryRowContext(ctx, updateCardioSessionByID,
+		arg.ID,
+		arg.UserID,
+		arg.Distance,
+		arg.Time,
+		arg.Notes,
+	)
+	var i UpdateCardioSessionByIDRow
 	err := row.Scan(
 		&i.ID,
 		&i.WorkoutID,

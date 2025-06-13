@@ -28,7 +28,7 @@ func (cfg *apiConfig) handlerStrengthTrainingSessionsUpdate(w http.ResponseWrite
 		return
 	}
 
-	strengthTrainingSession, err := cfg.db.UpdateStrengthTrainingSession(r.Context(), database.UpdateStrengthTrainingSessionParams{
+	strengthTrainingSession, err := cfg.db.UpdateStrengthTrainingSessionByID(r.Context(), database.UpdateStrengthTrainingSessionByIDParams{
 		WorkoutID:  params.WorkoutID,
 		ExerciseID: params.ExerciseID,
 		Notes: sql.NullString{

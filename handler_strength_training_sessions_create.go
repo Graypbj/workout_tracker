@@ -27,7 +27,7 @@ func (cfg *apiConfig) handlerStrengthTrainingSessionsCreate(w http.ResponseWrite
 	}
 
 	type response struct {
-		StrengthTrainingSession
+		StrengthTrainingSession StrengthTrainingSession `json:"strength_training_session"`
 	}
 
 	decoder := json.NewDecoder(r.Body)

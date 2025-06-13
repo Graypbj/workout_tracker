@@ -40,7 +40,7 @@ func (cfg *apiConfig) handlerExercisesUpdate(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	exercise, err := cfg.db.UpdateExercise(r.Context(), database.UpdateExerciseParams{
+	exercise, err := cfg.db.UpdateExerciseByID(r.Context(), database.UpdateExerciseByIDParams{
 		ID:           params.ID,
 		UserID:       userID,
 		Name:         params.Name,

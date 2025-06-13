@@ -12,6 +12,7 @@ import (
 
 type StrengthTrainingSet struct {
 	ID        uuid.UUID `json:"id"`
+	UserID    uuid.UUID `json:"user_id"`
 	SessionID uuid.UUID `json:"session_id"`
 	SetNumber int32     `json:"set_number"`
 	Reps      int32     `json:"reps"`
@@ -29,7 +30,7 @@ func (cfg *apiConfig) handlerStrengthTrainingSetsCreate(w http.ResponseWriter, r
 	}
 
 	type response struct {
-		StrengthTrainingSet
+		StrengthTrainingSet StrengthTrainingSet `json:"strength_training_set"`
 	}
 
 	token, err := auth.GetBearerToken(r.Header)
