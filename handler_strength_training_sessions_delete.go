@@ -44,5 +44,5 @@ func (cfg *apiConfig) handlerStrengthTrainingSessionsDelete(w http.ResponseWrite
 	}
 
 	var a any
-	respondWithJSON(w, http.StatusOK, a)
+	respondWithJSON(w, http.StatusNoContent, a)
 }

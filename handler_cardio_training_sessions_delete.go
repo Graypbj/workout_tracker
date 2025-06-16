@@ -44,5 +44,5 @@ func (cfg *apiConfig) handlerCardioTrainingSessionsDelete(w http.ResponseWriter,
 	}
 
 	var a any
-	respondWithJSON(w, http.StatusOK, a)
+	respondWithJSON(w, http.StatusNoContent, a)
 }

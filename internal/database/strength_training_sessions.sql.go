@@ -72,8 +72,13 @@ func (q *Queries) DeleteStrengthTrainingSessionByID(ctx context.Context, arg Del
 const listStrengthTrainingSessionsByWorkout = `-- name: ListStrengthTrainingSessionsByWorkout :many
 SELECT id, workout_id, exercise_id, notes, created_at, updated_at
 FROM strength_training_sessions
-WHERE workout_id = $1
+WHERE workout_id = $1 AND user_id = $2
 `
+
+type ListStrengthTrainingSessionsByWorkoutParams struct {
+	WorkoutID uuid.UUID
+	UserID    uuid.UUID
+}
 
 type ListStrengthTrainingSessionsByWorkoutRow struct {
 	ID         uuid.UUID
@@ -84,8 +89,8 @@ type ListStrengthTrainingSessionsByWorkoutRow struct {
 	UpdatedAt  time.Time
 }
 
-func (q *Queries) ListStrengthTrainingSessionsByWorkout(ctx context.Context, workoutID uuid.UUID) ([]ListStrengthTrainingSessionsByWorkoutRow, error) {
-	rows, err := q.db.QueryContext(ctx, listStrengthTrainingSessionsByWorkout, workoutID)
+func (q *Queries) ListStrengthTrainingSessionsByWorkout(ctx context.Context, arg ListStrengthTrainingSessionsByWorkoutParams) ([]ListStrengthTrainingSessionsByWorkoutRow, error) {
+	rows, err := q.db.QueryContext(ctx, listStrengthTrainingSessionsByWorkout, arg.WorkoutID, arg.UserID)
 	if err != nil {
 		return nil, err
 	}

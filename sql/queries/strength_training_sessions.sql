@@ -24,4 +24,4 @@ WHERE id = $1 AND user_id = $2;
 -- name: ListStrengthTrainingSessionsByWorkout :many
 SELECT id, workout_id, exercise_id, notes, created_at, updated_at
 FROM strength_training_sessions
-WHERE workout_id = $1;
+WHERE workout_id = $1 AND user_id = $2;
