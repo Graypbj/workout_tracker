@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const exerciseIdInput = document.getElementById('exercise-id');
     const exerciseNameInput = document.getElementById('exercise-name');
     const exerciseDescriptionInput = document.getElementById('exercise-description');
-    const exerciseCategoryInput = document.getElementById('exercise-category');
+    const exerciseTypeInput = document.getElementById('exercise-type'); // Changed from exerciseCategoryInput
     const exercisesListElement = document.getElementById('exercises-list');
     const cancelEditBtn = document.getElementById('cancel-edit-btn');
     const errorMessageElement = document.getElementById('exercise-error-message');
@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 listItem.innerHTML = `
                     <strong>${exercise.name}</strong>
                     <p>${exercise.description || 'No description'}</p>
-                    <small>Category: ${exercise.category || 'N/A'}</small>
+                    <small>Type: ${exercise.exercise_type || 'N/A'}</small>
                     <div>
                         <button class="edit-btn" data-id="${exercise.id}">Edit</button>
                         <button class="delete-btn" data-id="${exercise.id}">Delete</button>
@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if(exerciseIdInput) exerciseIdInput.value = exercise.id;
         if(exerciseNameInput) exerciseNameInput.value = exercise.name;
         if(exerciseDescriptionInput) exerciseDescriptionInput.value = exercise.description || '';
-        if(exerciseCategoryInput) exerciseCategoryInput.value = exercise.category || '';
+        if(exerciseTypeInput) exerciseTypeInput.value = exercise.exercise_type || ''; // Changed to exerciseTypeInput and exercise.exercise_type
         if(cancelEditBtn) cancelEditBtn.style.display = 'inline-block';
         if(exerciseNameInput) exerciseNameInput.focus();
         clearErrorMessage();
@@ -101,14 +101,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const id = exerciseIdInput ? exerciseIdInput.value : null;
             const name = exerciseNameInput ? exerciseNameInput.value.trim() : '';
             const description = exerciseDescriptionInput ? exerciseDescriptionInput.value.trim() : '';
-            const category = exerciseCategoryInput ? exerciseCategoryInput.value.trim() : '';
+            const exercise_type = exerciseTypeInput ? exerciseTypeInput.value : ''; // Changed from category to exercise_type
 
-            if (!name) {
-                displayErrorMessage('Exercise name is required.');
+            if (!name || !exercise_type) { // Added !exercise_type check
+                displayErrorMessage('Exercise name and type are required.');
                 return;
             }
 
-            const exerciseData = { name, description, category };
+            const exerciseData = { name, description, exercise_type }; // Changed category to exercise_type
             const method = id ? 'PUT' : 'POST';
             if (id) {
                 exerciseData.id = id;

@@ -106,3 +106,85 @@ a {
 a:hover {
 	text-decoration: underline;
 }
+
+/* frontend/css/styles.css - Appended styles */
+
+nav > div {
+    display: flex; /* Arrange links horizontally */
+    gap: 15px; /* Add space between links */
+    align-items: center; /* Align items vertically if nav height allows */
+}
+
+/* Optional: Adjust nav h1 and div to align nicely if needed */
+/* The existing nav rule is already display:flex, justify-content: space-between, align-items: center */
+/* So, we might only need to adjust padding or specific link styling if current nav a rules are too broad */
+
+/* Specificity for nav links within the div, to override general nav a if needed */
+nav div a {
+    color: #E6E7ED; /* Keep original link color from existing rules */
+    text-decoration: none;
+    /* display: block and margin-top from general 'a' rules might not be ideal here,
+       flex properties on parent will handle alignment and spacing.
+       Let's ensure they don't interfere negatively. */
+    display: inline; /* Override general 'a' display:block */
+    margin-top: 0; /* Override general 'a' margin-top */
+}
+
+nav div a:hover {
+    text-decoration: underline; /* Keep original hover from existing rules */
+    color: #FFF; /* Example: Slightly different hover for emphasis if desired */
+}
+
+/* Ensure h1 doesn't have excessive margins interfering with flex alignment */
+/* nav h1 already has font-size: 1.5rem; and by default h1 might have margins.
+   The existing nav rule has align-items: center, so this should be fine.
+   If specific adjustments for h1 margin are needed, they can be added.
+   For now, the existing 'nav h1' rule seems sufficient.
+*/
+
+/* The prompt included rules for nav, nav h1 a, nav div a, nav h1 a:hover, nav div a:hover, nav h1 { margin: 0; }
+   I will integrate these carefully, considering the existing styles.
+   The existing nav already has:
+    background-color: #004B70;
+    color: white;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+   The new styles suggest:
+    padding: 10px 20px; (similar to 1rem 2rem, can choose one)
+    background-color: #f0f0f0; (conflicts, existing is #004B70)
+    border-bottom: 1px solid #ccc; (new)
+   I'll keep the existing background-color as it seems part of the original theme.
+   I'll use the new padding format and add the border.
+*/
+
+/* Updated Nav rule from appended styles, merged with existing */
+nav {
+	background-color: #004B70; /* Kept from original theme */
+	color: white;
+	padding: 10px 20px; /* Using new padding format */
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+    border-bottom: 1px solid #ccc; /* Added from new styles */
+}
+
+/* nav h1 a styling */
+nav h1 a {
+    text-decoration: none;
+    color: #E6E7ED; /* Match existing nav a color */
+}
+nav h1 a:hover {
+    text-decoration: underline; /* Match existing nav a:hover */
+    color: #FFFFFF; /* Slightly brighter for h1 link hover */
+}
+
+/* Ensure h1 itself has no conflicting margin - already present in global reset '*' */
+/* nav h1 { margin: 0; } */ /* Not strictly needed due to reset, but harmless if added */
+/* nav h1 rule already exists for font-size */
+nav h1 {
+	font-size: 1.5rem;
+    margin: 0; /* Explicitly set margin to 0 for h1 inside nav */
+}

@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
         createWorkoutForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             clearErrorMessage();
-            const type = workoutTypeInput.value.trim();
+            const type = workoutTypeInput.value; // Removed .trim()
             const notes = workoutNotesInput.value.trim();
 
             if (!type) {

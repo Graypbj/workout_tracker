@@ -35,8 +35,12 @@
                     <textarea id="exercise-description" name="description"></textarea>
                 </div>
                 <div>
-                    <label for="exercise-category">Category:</label>
-                    <input type="text" id="exercise-category" name="category">
+                    <label for="exercise-type">Exercise Type:</label>
+                    <select id="exercise-type" name="exercise_type" required>
+                        <option value="">Select Type</option>
+                        <option value="strength_training">Strength Training</option>
+                        <option value="cardio">Cardio</option>
+                    </select>
                 </div>
                 <button type="submit">Save Exercise</button>
                 <button type="button" id="cancel-edit-btn" style="display:none;">Cancel Edit</button>

@@ -31,7 +31,11 @@
 		<h3>Add Workout</h3>
 		<form id="create-workout-form">
 			<label for="workout-type">Type</label>
-			<input type="text" id="workout-type" name="workout_type" required />
+            <select id="workout-type" name="workout_type" required>
+                <option value="">Select Type</option>
+                <option value="strength_training">Strength Training</option>
+                <option value="cardio">Cardio</option>
+            </select>
 
 			<label for="workout-notes">Notes</label>
 			<textarea id="workout-notes" name="notes"></textarea>
