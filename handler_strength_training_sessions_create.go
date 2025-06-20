@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/Graypbj/workout_tracker/internal/auth"
 	"github.com/Graypbj/workout_tracker/internal/database"
 	"github.com/google/uuid"
 )
@@ -30,9 +31,21 @@ func (cfg *apiConfig) handlerStrengthTrainingSessionsCreate(w http.ResponseWrite
 		StrengthTrainingSession StrengthTrainingSession `json:"strength_training_session"`
 	}
 
+	token, err := auth.GetBearerToken(r.Header)
+	if err != nil {
+		respondWithError(w, http.StatusUnauthorized, "Couldn't find JWT", err)
+		return
+	}
+
+	userID, err := auth.ValidateJWT(token, cfg.jwtSecret)
+	if err != nil {
+		respondWithError(w, http.StatusUnauthorized, "Couldn't validate JWT", err)
+		return
+	}
+
 	decoder := json.NewDecoder(r.Body)
 	params := parameters{}
-	err := decoder.Decode(&params)
+	err = decoder.Decode(&params)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Couldn't decode parameters", err)
 		return
@@ -40,6 +53,7 @@ func (cfg *apiConfig) handlerStrengthTrainingSessionsCreate(w http.ResponseWrite
 
 	strengthTrainingSession, err := cfg.db.CreateStrengthTrainingSession(r.Context(), database.CreateStrengthTrainingSessionParams{
 		WorkoutID:  params.WorkoutID,
+		UserID:     userID,
 		ExerciseID: params.ExerciseID,
 		Notes: sql.NullString{
 			String: params.Notes,

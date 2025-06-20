@@ -45,5 +45,5 @@ func (cfg *apiConfig) handlerExercisesDelete(w http.ResponseWriter, r *http.Requ
 
 	var a any
 
-	respondWithJSON(w, http.StatusOK, a)
+	respondWithJSON(w, http.StatusNoContent, a)
 }

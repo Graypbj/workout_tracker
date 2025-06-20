@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/Graypbj/workout_tracker/internal/auth"
+	"github.com/Graypbj/workout_tracker/internal/database"
 	"github.com/google/uuid"
 )
 
@@ -18,7 +19,7 @@ func (cfg *apiConfig) handlerStrengthTrainingSessionsRetrieve(w http.ResponseWri
 		return
 	}
 
-	_, err = auth.ValidateJWT(token, cfg.jwtSecret)
+	userID, err := auth.ValidateJWT(token, cfg.jwtSecret)
 	if err != nil {
 		respondWithError(w, http.StatusUnauthorized, "Couldn't validate JWT", err)
 		return
@@ -36,7 +37,10 @@ func (cfg *apiConfig) handlerStrengthTrainingSessionsRetrieve(w http.ResponseWri
 		return
 	}
 
-	dbStrengthTrainingSessions, err := cfg.db.ListStrengthTrainingSessionsByWorkout(r.Context(), workoutID)
+	dbStrengthTrainingSessions, err := cfg.db.ListStrengthTrainingSessionsByWorkout(r.Context(), database.ListStrengthTrainingSessionsByWorkoutParams{
+		WorkoutID: workoutID,
+		UserID:    userID,
+	})
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Couldn't retrieve strength training sessions", err)
 		return

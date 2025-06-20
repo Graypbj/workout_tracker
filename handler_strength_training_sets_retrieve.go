@@ -33,7 +33,7 @@ func (cfg *apiConfig) handlerStrengthTrainingSetsRetrieve(w http.ResponseWriter,
 
 	sessionID, err := uuid.Parse(sessionIDStr)
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid workout_id format", err)
+		respondWithError(w, http.StatusBadRequest, "Invalid session_id format", err)
 		return
 	}
 

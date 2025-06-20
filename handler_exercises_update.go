@@ -36,7 +36,7 @@ func (cfg *apiConfig) handlerExercisesUpdate(w http.ResponseWriter, r *http.Requ
 	params := parameters{}
 	err = decoder.Decode(&params)
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "Couldn't decode paramters", err)
+		respondWithError(w, http.StatusInternalServerError, "Couldn't decode parameters", err)
 		return
 	}
 

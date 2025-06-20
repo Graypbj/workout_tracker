@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<title>Workouts - Workz</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link rel="stylesheet" href="css/styles.css" />
+</head>
+
+<body>
+	<nav>
+    <h1><a href="workouts.html">Workz</a></h1>
+    <div>
+        <a href="workouts.html">Workouts</a>
+        <a href="exercises.html">Exercises</a>
+        <a href="strength_training_sessions.html">Strength</a>
+        <a href="cardio_sessions.html">Cardio</a>
+        <a href="profile.html">Profile</a>
+        <a href="#" id="logout-link">Logout</a>
+    </div>
+	</nav>
+
+	<main>
+		<h2>Your Workouts</h2>
+
+		<section id="workouts-list">
+			<!-- workouts will be populated here -->
+		</section>
+
+		<h3>Add Workout</h3>
+		<form id="create-workout-form">
+			<label for="workout-type">Type</label>
+			<input type="text" id="workout-type" name="workout_type" required />
+
+			<label for="workout-notes">Notes</label>
+			<textarea id="workout-notes" name="notes"></textarea>
+
+			<button type="submit">Add Workout</button>
+		</form>
+	</main>
+
+	<script src="js/workouts.js"></script>
+</body>
+
+</html>

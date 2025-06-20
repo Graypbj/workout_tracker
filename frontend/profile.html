@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>User Profile - Workz</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <nav>
+        <h1><a href="workouts.html">Workz</a></h1>
+        <div>
+            <a href="workouts.html">Workouts</a>
+            <a href="exercises.html">Exercises</a>
+            <a href="strength_training_sessions.html">Strength</a>
+            <a href="cardio_sessions.html">Cardio</a>
+            <a href="profile.html">Profile</a>
+            <a href="#" id="logout-link">Logout</a>
+        </div>
+    </nav>
+
+    <main>
+        <h2>User Profile</h2>
+
+        <section id="update-profile-section">
+            <h3>Update Your Information</h3>
+            <p>To update your email, please provide the new email and a password. This password will be set for your account.</p>
+            <form id="update-profile-form">
+                <div>
+                    <label for="profile-email">New Email:</label>
+                    <input type="email" id="profile-email" name="email" required autocomplete="email">
+                </div>
+                <div>
+                    <label for="profile-password">Password:</label>
+                    <input type="password" id="profile-password" name="password" required autocomplete="new-password">
+                    <small>Enter your current password or a new one. This will be your password moving forward.</small>
+                </div>
+                <button type="submit">Update Profile</button>
+            </form>
+            <p id="profile-message" class="message-text" style="display: none;"></p>
+        </section>
+    </main>
+
+    <script type="module" src="js/profile.js"></script>
+</body>
+</html>

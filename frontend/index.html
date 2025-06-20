@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<title>Workz</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
+	<meta name="description" content="Login to Workz" />
+	<link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+	<nav>
+		<h1><a href="index.html">Workz</a></h1>
+		<div>
+			<a href="index.html">Login</a>
+			<a href="signup.html">Sign Up</a>
+		</div>
+	</nav>
+
+	<main>
+		<h2>Login</h2>
+
+		<form id="login-form">
+			<label for="email">email</label>
+			<input type="text" id="email" name="email" required autocomplete="email" />
+
+			<label for="password">Password</label>
+			<input type="password" id="password" name="password" required autocomplete="current-password" />
+
+			<button type="submit">Log In</button>
+		</form>
+        <p id="login-error-message" class="error-text" style="display: none;"></p>
+		<p>Don't have an account? <a href="signup.html">Sign up here</a>.</p>
+		<!-- <a href="">Forgot Password</a> --> <!-- Forgot password not implemented -->
+	</main>
+</body>
+
+<script type="module" src="js/login.js"></script>
+
+</html>

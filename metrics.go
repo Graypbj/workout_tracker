@@ -12,7 +12,7 @@ func (cfg *apiConfig) handlerCount(w http.ResponseWriter, r *http.Request) {
 <html>
 
 <body>
-	<h1>Welcome, Chirpy Admin</h1>
+	<h1>Welcome, Workz Admin</h1>
 	<p>Chirpy has been visited %d times!</p>
 </body>
 
