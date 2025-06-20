@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Strength Training - Workz</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        /* Add some basic styling for sessions and sets */
+        .session { border: 1px solid #ccc; margin-bottom: 20px; padding: 15px; border-radius: 5px; }
+        .session-header { display: flex; justify-content: space-between; align-items: center; }
+        .session-actions button, .set-actions button { margin-left: 5px; }
+        .sets-list { margin-top: 10px; padding-left: 20px; }
+        .set-item { border-top: 1px dashed #eee; padding: 8px 0; }
+        .set-item:first-child { border-top: none; }
+        .add-set-form { margin-top: 10px; padding: 10px; background-color: #f9f9f9; border-radius: 4px;}
+    </style>
+</head>
+<body>
+    <nav>
+        <h1><a href="workouts.html">Workz</a></h1>
+        <div>
+            <a href="workouts.html">Workouts</a>
+            <a href="exercises.html">Exercises</a>
+            <a href="strength_training_sessions.html">Strength</a>
+            <a href="cardio_sessions.html">Cardio</a>
+            <a href="profile.html">Profile</a>
+            <a href="#" id="logout-link">Logout</a>
+        </div>
+    </nav>
+
+    <main>
+        <h2>Strength Training Sessions</h2>
+
+        <section id="create-session-section">
+            <h3>Add New Strength Session</h3>
+            <form id="create-session-form">
+                <div>
+                    <label for="session-date">Date:</label>
+                    <input type="date" id="session-date" name="session_date" required>
+                </div>
+                <div>
+                    <label for="session-notes">Notes:</label>
+                    <textarea id="session-notes" name="notes"></textarea>
+                </div>
+                <button type="submit">Add Session</button>
+            </form>
+            <p id="session-error-message" class="error-text" style="display: none;"></p>
+        </section>
+
+        <section id="sessions-list-section">
+            <h3>Your Sessions</h3>
+            <div id="sessions-list">
+                <!-- Strength training sessions will be populated here -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal for Add/Edit Set (optional, can be inline forms too) -->
+    <div id="manage-set-modal" style="display:none; position:fixed; top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:100;justify-content:center;align-items:center;">
+        <div style="background:white;padding:20px;border-radius:5px;width:400px;">
+            <h4 id="set-modal-title">Add Set</h4>
+            <form id="manage-set-form">
+                <input type="hidden" id="set-id">
+                <input type="hidden" id="set-session-id">
+                <div>
+                    <label for="set-exercise">Exercise:</label>
+                    <select id="set-exercise" name="exercise_id" required></select>
+                </div>
+                <div>
+                    <label for="set-reps">Reps:</label>
+                    <input type="number" id="set-reps" name="reps" required min="1">
+                </div>
+                <div>
+                    <label for="set-weight">Weight (kg):</label>
+                    <input type="number" id="set-weight" name="weight" step="0.01" required min="0">
+                </div>
+                 <div>
+                    <label for="set-duration">Duration (seconds, if applicable):</label>
+                    <input type="number" id="set-duration" name="duration_seconds" min="0">
+                </div>
+                <div>
+                    <label for="set-distance">Distance (meters, if applicable):</label>
+                    <input type="number" id="set-distance" name="distance_meters" min="0">
+                </div>
+                <div>
+                    <label for="set-notes">Set Notes:</label>
+                    <textarea id="set-notes-form" name="notes"></textarea> <!-- Changed id to avoid conflict -->
+                </div>
+                <button type="submit">Save Set</button>
+                <button type="button" id="cancel-set-modal">Cancel</button>
+            </form>
+            <p id="set-error-message" class="error-text" style="display: none;"></p>
+        </div>
+    </div>
+
+    <script type="module" src="js/strength_training_sessions.js"></script>
+</body>
+</html>

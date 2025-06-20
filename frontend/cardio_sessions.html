@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Cardio Sessions - Workz</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .session-item { border: 1px solid #eee; margin-bottom: 10px; padding: 10px; border-radius: 4px; }
+        .session-item h4 { margin-top: 0; }
+        .session-item p { margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+    <nav>
+        <h1><a href="workouts.html">Workz</a></h1>
+        <div>
+            <a href="workouts.html">Workouts</a>
+            <a href="exercises.html">Exercises</a>
+            <a href="strength_training_sessions.html">Strength</a>
+            <a href="cardio_sessions.html">Cardio</a>
+            <a href="profile.html">Profile</a>
+            <a href="#" id="logout-link">Logout</a>
+        </div>
+    </nav>
+
+    <main>
+        <h2>Cardio Training Sessions</h2>
+
+        <section id="manage-cardio-session-section">
+            <h3>Add/Edit Cardio Session</h3>
+            <form id="manage-cardio-session-form">
+                <input type="hidden" id="cardio-session-id" name="id">
+                <div>
+                    <label for="cardio-exercise-name">Exercise Name/Type:</label>
+                    <input type="text" id="cardio-exercise-name" name="exercise_name" required>
+                </div>
+                <div>
+                    <label for="cardio-duration">Duration (minutes):</label>
+                    <input type="number" id="cardio-duration" name="duration_minutes" required min="1">
+                </div>
+                <div>
+                    <label for="cardio-distance">Distance (km):</label>
+                    <input type="number" id="cardio-distance" name="distance_km" step="0.01" min="0">
+                </div>
+                <div>
+                    <label for="cardio-session-date">Date:</label>
+                    <input type="date" id="cardio-session-date" name="session_date" required>
+                </div>
+                <div>
+                    <label for="cardio-notes">Notes:</label>
+                    <textarea id="cardio-notes" name="notes"></textarea>
+                </div>
+                <button type="submit">Save Session</button>
+                <button type="button" id="cancel-edit-btn" style="display:none;">Cancel Edit</button>
+            </form>
+            <p id="cardio-session-error-message" class="error-text" style="display: none;"></p>
+        </section>
+
+        <section id="cardio-sessions-list-section">
+            <h3>Your Cardio Sessions</h3>
+            <div id="cardio-sessions-list">
+                <!-- Cardio sessions will be populated here -->
+            </div>
+        </section>
+    </main>
+
+    <script type="module" src="js/cardio_sessions.js"></script>
+</body>
+</html>

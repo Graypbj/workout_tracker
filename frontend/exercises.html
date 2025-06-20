@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Exercises - Workz</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <nav>
+        <h1><a href="workouts.html">Workz</a></h1>
+        <div>
+            <a href="workouts.html">Workouts</a>
+            <a href="exercises.html">Exercises</a>
+            <a href="strength_training_sessions.html">Strength</a>
+            <a href="cardio_sessions.html">Cardio</a>
+            <a href="profile.html">Profile</a>
+            <a href="#" id="logout-link">Logout</a>
+        </div>
+    </nav>
+
+    <main>
+        <h2>Manage Exercises</h2>
+
+        <section id="exercise-form-section">
+            <h3>Add/Edit Exercise</h3>
+            <form id="manage-exercise-form">
+                <input type="hidden" id="exercise-id" name="id">
+                <div>
+                    <label for="exercise-name">Name:</label>
+                    <input type="text" id="exercise-name" name="name" required>
+                </div>
+                <div>
+                    <label for="exercise-description">Description:</label>
+                    <textarea id="exercise-description" name="description"></textarea>
+                </div>
+                <div>
+                    <label for="exercise-category">Category:</label>
+                    <input type="text" id="exercise-category" name="category">
+                </div>
+                <button type="submit">Save Exercise</button>
+                <button type="button" id="cancel-edit-btn" style="display:none;">Cancel Edit</button>
+            </form>
+            <p id="exercise-error-message" class="error-text" style="display: none;"></p>
+        </section>
+
+        <section id="exercises-list-section">
+            <h3>Your Exercises</h3>
+            <ul id="exercises-list">
+                <!-- Exercises will be populated here -->
+            </ul>
+        </section>
+    </main>
+
+    <script type="module" src="js/exercises.js"></script>
+</body>
+</html>
