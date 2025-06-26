@@ -21,10 +21,59 @@
 			<!-- workouts will be populated here -->
 		</section>
 
+		<section id="workouts-list">
+			<!-- Populated by JS -->
+		</section>
+
+		<!-- Optional template for reuse (hidden) -->
+		<template id="exercise-form-template">
+			<form class="exercise-form">
+				<label>
+					Name:
+					<input name="name" required />
+				</label>
+				<label>
+					Type:
+					<select name="exercise_type" required>
+						<option value="strength_training">Strength</option>
+						<option value="cardio">Cardio</option>
+					</select>
+				</label>
+				<button type="submit">Add Exercise</button>
+
+				<!-- Strength Session Inputs -->
+				<div class="strength-inputs hidden">
+					<h5>Strength Set</h5>
+					<label>Set #: <input type="number" name="set_number" min="1" /></label>
+					<label>Reps: <input type="number" name="reps" min="1" /></label>
+					<label>Weight: <input type="text" name="weight" placeholder="e.g. 135lbs" /></label>
+				</div>
+
+				<!-- Cardio Session Inputs -->
+				<div class="cardio-inputs hidden">
+					<h5>Cardio Info</h5>
+					<label>Duration (minutes): <input type="number" name="duration" min="0" /></label>
+					<label>Distance: <input type="number" name="distance" step="any" /></label>
+					<label>
+						Unit:
+						<select name="distance_unit">
+							<option value="miles">Miles</option>
+							<option value="meters">Meters</option>
+							<option value="kilometers">Kilometers</option>
+						</select>
+					</label>
+				</div>
+			</form>
+		</template>
+
 		<h3>Add Workout</h3>
 		<form id="create-workout-form">
-			<label for="workout-type">Type</label>
-			<input type="text" id="workout-type" name="workout_type" required />
+			<label for="type">Workout Type</label>
+			<select name="type" id="type" required>
+				<option value="">-- Select a type --</option>
+				<option value="strength_training">Strength Training</option>
+				<option value="cardio">Cardio Training</option>
+			</select>
 
 			<label for="workout-notes">Notes</label>
 			<textarea id="workout-notes" name="notes"></textarea>

@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-	const form = document.getElementById('login-form');
+	const form = document.getElementById('sign_up_form');
 
 	form.addEventListener('submit', async (e) => {
 		e.preventDefault();
@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		const password = document.getElementById('password').value;
 
 		try {
-			const response = await fetch('http://localhost:8080/api/login', {
+			const response = await fetch('http://localhost:8080/api/users', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -19,13 +19,14 @@ document.addEventListener('DOMContentLoaded', () => {
 			if (response.ok) {
 				const data = await response.json();
 
-				localStorage.setItem('token', data.token);
-				localStorage.setItem('refreshToken', data.refresh_token);
+				localStorage.setItem('created_at', data.created_at);
+				localStorage.setItem('updated_at', data.updated_at);
+				localStorage.setItem('email', data.email);
 
-				window.location.href = '/workouts.html';
+				window.location.href = '/login.html';
 			}
 		} catch (err) {
-			console.error('Login request failed:', err);
+			console.error('Account creation request failed:', err);
 		}
 	});
 });
